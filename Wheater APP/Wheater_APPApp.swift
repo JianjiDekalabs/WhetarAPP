@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct Wheater_APPApp: App {
+    @StateObject var listOfCities: ListaViewModel = ListaViewModel()
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(listOfCities)
         }
     }
 }
