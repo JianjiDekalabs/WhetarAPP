@@ -14,11 +14,11 @@ struct Model: Decodable {
     var windSpeed: Wind
     
     static let empty: Model = .init(
-           city: "No city",
-           weather: [Weather(main: "Unknown", description: "No description", icon: "no-icon")],
-           main: Main(temp: 0.0, feelsLike: 0.0, tempMin: 0.0, tempMax: 0.0, humidity: 0.0),
-           windSpeed: Wind(speed: 0.0)
-       )
+        city: "No city",
+        weather: [Weather(main: "Unknown", description: "No description", icon: "no-icon")],
+        main: Main(temp: 0.0, feelsLike: 0.0, tempMin: 0.0, tempMax: 0.0, humidity: 0.0),
+        windSpeed: Wind(speed: 0.0)
+    )
     
     enum CodingKeys: String, CodingKey {
         case city = "name"
@@ -74,7 +74,7 @@ struct WheaterModelMapper {
     }
 }
 
-/*
+/* JSON del API
 {
  "id": 3163858,
  "name": "Zocca",

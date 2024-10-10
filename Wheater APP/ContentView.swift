@@ -6,40 +6,40 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var modelView: ModelView = ModelView()
     @State var city: String = ""
+    @State var showDropdown: Bool = false
     
     var body: some View {
         NavigationStack {
             ZStack {
                 LinearGradient(gradient: Gradient(colors: [.blue, .red]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 
-                VStack {
-                    TextField("Enter City", text: $city)
-                        .padding()
-                        .background(.white)
-                        .cornerRadius(10)
-                        .padding()
-                    Text("\(modelView.model.city) 📍")
-                        .font(.system(size: 40, weight: .bold))
-                   
-                    Temperaturas(modelView: modelView)
-                    
-                    TemperaturasMaxYMin(modelView: modelView)
-                    
-                    HumidityAndThermSensation(modelView: modelView)
-
-                    Spacer()
-
-                    button
-                    
-                    Spacer()
-
-                   ViewListCities(name: $city)
-                    
-                }.onAppear(){
-                    Task{
-                        await modelView.getWheater(city: city)
+                if !showDropdown {
+                    VStack {
+                        ToolBar(city: $city, showDropdown: $showDropdown)
+                        
+                        Text("\(modelView.model.city) 📍")
+                            .font(.system(size: 40, weight: .bold))
+                        
+                        Temperaturas(modelView: modelView)
+                        
+                        TemperaturasMaxYMin(modelView: modelView)
+                        
+                        HumidityAndThermSensation(modelView: modelView)
+                        
+                        Spacer()
+                        
+                        button //Boton de buscar
+                        
+                        Spacer()
+                        
+                    }.onAppear(){
+                        Task{
+                            await modelView.getWheater(city: city)
+                        }
                     }
                 }
+                ViewListCities(name: $city, showDropdown: $showDropdown, modelView: modelView)
+                
             }
         }
     }
@@ -48,6 +48,7 @@ struct ContentView: View {
         Button(action: {
             Task{
                 await modelView.getWheater(city: city)
+                city = "" //Restablece el texfield del buscador
             }
         }, label: {
             Text("Buscar")
@@ -59,6 +60,51 @@ struct ContentView: View {
         })
     }
     
+}
+
+struct ToolBar: View {
+    @Binding var city: String
+    @State private var showTextField: Bool = false // Controla si el TextField se muestra
+    @Binding var showDropdown: Bool
+    
+    var body: some View {
+        HStack {
+            Button(action: {
+                withAnimation {
+                    showDropdown.toggle()
+                }
+            }) {
+                Image(systemName: "line.3.horizontal")
+                    .foregroundStyle(.black)
+                    .font(.system(size: 25, weight: .medium))
+            }
+            
+            if showTextField {
+                TextField("Introduce ciudad", text: $city)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+                    .onAppear {
+                        city = "" //Restablece el texfield del buscador
+                    }
+            } else {
+                Rectangle()
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+                    .opacity(0.0)
+            }
+            
+            Button(action: {
+                // Cambia el estado de showTextField al pulsar la lupa
+                withAnimation {
+                    showTextField.toggle()
+                }
+            }) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.black)
+                    .font(.system(size: 23, weight: .medium))
+            }
+        }
+        .padding()
+    }
 }
 
 struct Temperaturas: View {
