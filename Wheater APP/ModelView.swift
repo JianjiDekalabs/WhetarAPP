@@ -11,7 +11,7 @@ final class ModelView: ObservableObject {
     let modelWheater: WheaterModelMapper = WheaterModelMapper()
     
     func getWheater(city: String) async{
-        let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=65fc99942a704835089df97919b8685b&units=metric&lang=es"
+        let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=YOURAPINUMBERGOESHERE&units=metric&lang=es"
         )!
         
         do{
